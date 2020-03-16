@@ -18,11 +18,6 @@ class Camera {
   }
 
   async start() {
-    let facingMode = 'user';
-    let sUsrAg = navigator.userAgent.toLowerCase();
-    if (sUsrAg.indexOf("mobile") > -1) {
-      facingMode = 'environment';
-    }
     let constraints = {
       audio: false,
       video: {
@@ -32,10 +27,25 @@ class Camera {
           maxWidth: 800,
           minAspectRatio: 1.6
         },
-        facingMode: facingMode,
         optional: []
       }
     };
+    let sUsrAg = navigator.userAgent.toLowerCase();
+    if (sUsrAg.indexOf("mobile") > -1) {
+      constraints = {
+        audio: false,
+        video: {
+          mandatory: {
+            sourceId: this.id,
+            minWidth: 600,
+            maxWidth: 800,
+            minAspectRatio: 1.6
+          },
+          facingMode: "environment",
+          optional: []
+        }
+      };
+    }
 
     this._stream = await Camera._wrapErrors(async () => {
       return await navigator.mediaDevices.getUserMedia(constraints);
