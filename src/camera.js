@@ -11,34 +11,37 @@ class MediaError extends Error {
 }
 
 class Camera {
-  constructor(id, name, facingMode) {
+  constructor(id, name) {
     this.id = id;
     this.name = name;
     this._stream = null;
-    this.facingMode = facingMode;
   }
 
   async start() {
-    let self = this;
+    let facingMode = 'user';
+    let sUsrAg = navigator.userAgent.toLowerCase();
+    if (sUsrAg.indexOf("mobile") > -1) {
+      facingMode = 'environment';
+    }
     let constraints = {
       audio: false,
       video: {
         mandatory: {
-          sourceId: self.id,
+          sourceId: this.id,
           minWidth: 600,
           maxWidth: 800,
           minAspectRatio: 1.6
         },
-        facingMode: self.facingMode,
+        facingMode: facingMode,
         optional: []
       }
     };
 
-    self._stream = await Camera._wrapErrors(async () => {
+    this._stream = await Camera._wrapErrors(async () => {
       return await navigator.mediaDevices.getUserMedia(constraints);
     });
 
-    return self._stream;
+    return this._stream;
   }
 
   stop() {
@@ -53,13 +56,13 @@ class Camera {
     this._stream = null;
   }
 
-  static async getCameras(facingMode="user") {
+  static async getCameras() {
     await this._ensureAccess();
 
     let devices = await navigator.mediaDevices.enumerateDevices();
     return devices
       .filter(d => d.kind === 'videoinput')
-      .map(d => new Camera(d.deviceId, cameraName(d.label), facingMode));
+      .map(d => new Camera(d.deviceId, cameraName(d.label)));
   }
 
   static async _ensureAccess() {
