@@ -30,6 +30,7 @@ class Camera {
         optional: []
       }
     };
+    // 判断终端类型，手机的话默认使用后置摄像头
     let sUsrAg = navigator.userAgent.toLowerCase();
     if (sUsrAg.indexOf("mobile") > -1) {
       constraints = {
