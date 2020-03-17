@@ -32,7 +32,8 @@ class Camera {
     };
     // 判断终端类型，手机的话默认使用后置摄像头
     let sUsrAg = navigator.userAgent.toLowerCase();
-    if (sUsrAg.indexOf("mobile") > -1 && sUsrAg.indexOf("iphone") > -1) {
+    if (sUsrAg.indexOf("mobile") > -1 
+        && (sUsrAg.indexOf("iphone") > -1 || sUsrAg.indexOf("ipad") > -1)) {
       constraints = {
         audio: false,
         video: {
